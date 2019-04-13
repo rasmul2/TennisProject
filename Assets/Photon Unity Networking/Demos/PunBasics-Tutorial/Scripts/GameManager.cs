@@ -78,7 +78,7 @@ namespace ExitGames.Demos.DemoAnimator
                     }
                     else
                     {
-                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 10f, 0f), Quaternion.identity, 0);
+                        PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 10f, 0f), Quaternion.identity, 0);
                     }
 				}else{
 
