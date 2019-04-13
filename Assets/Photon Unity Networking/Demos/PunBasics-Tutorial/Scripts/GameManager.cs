@@ -31,7 +31,10 @@ namespace ExitGames.Demos.DemoAnimator
 		static public GameManager Instance;
 
 		[Tooltip("The prefab to use for representing the player")]
-		public GameObject playerPrefab;
+		public GameObject playerPrefabLookingGlass;
+        public GameObject playerPrefabOculus;
+
+        public bool isLookingGlass;
 
 		#endregion
 
@@ -58,7 +61,7 @@ namespace ExitGames.Demos.DemoAnimator
 				return;
 			}
 
-			if (playerPrefab == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
+			if (playerPrefabOculus == null || playerPrefabLookingGlass == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
 				
 				Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'",this);
 			} else {
@@ -68,8 +71,15 @@ namespace ExitGames.Demos.DemoAnimator
 				{
 					Debug.Log("We are Instantiating LocalPlayer from "+SceneManagerHelper.ActiveSceneName);
 
-					// we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-					PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f,5f,0f), Quaternion.identity, 0);
+                    // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
+                    if (isLookingGlass)
+                    {
+                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, -10f, 0f), Quaternion.identity, 0);
+                    }
+                    else
+                    {
+                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 10f, 0f), Quaternion.identity, 0);
+                    }
 				}else{
 
 					Debug.Log("Ignoring scene load for "+ SceneManagerHelper.ActiveSceneName);
