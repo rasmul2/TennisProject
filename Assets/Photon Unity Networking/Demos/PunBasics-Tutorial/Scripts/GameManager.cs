@@ -74,11 +74,11 @@ namespace ExitGames.Demos.DemoAnimator
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
                     if (isLookingGlass)
                     {
-                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, -10f, 0f), Quaternion.identity, 0);
+                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(10f, 0f, 0f), Quaternion.identity, 0);
                     }
                     else
                     {
-                        PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 10f, 0f), Quaternion.identity, 0);
+                        PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(-10f, 0f, 0f), Quaternion.identity, 0);
                     }
 				}else{
 
