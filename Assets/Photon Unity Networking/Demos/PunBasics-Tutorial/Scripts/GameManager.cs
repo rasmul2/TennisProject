@@ -32,9 +32,8 @@ namespace ExitGames.Demos.DemoAnimator
 
 		static public GameManager Instance;
 
-		[Tooltip("The prefab to use for representing the player")]
-		public GameObject playerPrefabLookingGlass;
-        public GameObject playerPrefabOculus;
+        [Tooltip("The prefab to use for representing the player")]
+        public GameObject playerPrefab;
 
         public bool isLookingGlass;
 
@@ -45,14 +44,10 @@ namespace ExitGames.Demos.DemoAnimator
 		#region Private Variables
 
 		private GameObject instance;
-        private GameObject[] instantiatedplayers;
-        private bool towardsPlayer2 = true;
+        private GameObject instantiatedPlayer;
+        private Vector3 playerposition;
 
-        private Vector3 player1position;
-        private Vector3 player2position;
-
-        public int player2score;
-        public int player1score;
+        private bool movingtowards2;
 		#endregion
 
 		#region MonoBehaviour CallBacks
@@ -63,7 +58,6 @@ namespace ExitGames.Demos.DemoAnimator
 		void Start()
 		{
 			Instance = this;
-            instantiatedplayers = new GameObject[2];
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
 			if (!PhotonNetwork.connected)
@@ -73,7 +67,7 @@ namespace ExitGames.Demos.DemoAnimator
 				return;
 			}
 
-			if (playerPrefabOculus == null || playerPrefabLookingGlass == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
+			if (playerPrefab == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
 				
 				Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'",this);
 			} else {
@@ -84,20 +78,10 @@ namespace ExitGames.Demos.DemoAnimator
 					Debug.Log("We are Instantiating LocalPlayer from "+SceneManagerHelper.ActiveSceneName);
 
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    if (isLookingGlass)
-                    {
-                       instantiatedplayers[1] = PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, -7, 25f), Quaternion.Euler(new Vector3(0, 180, 0)), 0);
-                        player1position = instantiatedplayers[1].transform.position;
-                        instantiatedplayers[1].GetComponent<PaddleCollider>().swung = true;
-                        instantiatedplayers[1].GetComponent<PaddleCollider>().swingTime = Time.time;
-                        PlayerManager.LocalPlayerInstance = instantiatedplayers[1];
-                    }
-                    else
-                    {
-                        instantiatedplayers[0] = (PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0));
-                        player2position = instantiatedplayers[0].transform.position;
-                        PlayerManager.LocalPlayerInstance = instantiatedplayers[0];
-                    }
+                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0);
+                    playerposition = instantiatedPlayer.transform.position;
+                    
+  
 				}else{
 
 					Debug.Log("Ignoring scene load for "+ SceneManagerHelper.ActiveSceneName);
@@ -108,40 +92,58 @@ namespace ExitGames.Demos.DemoAnimator
 
 		}
 
-		/// <summary>
-		/// MonoBehaviour method called on GameObject by Unity on every frame.
-		/// </summary>
-		void Update()
-		{
-            //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
-            if(instantiatedplayers[0] != null && instantiatedplayers[1] != null)
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity on every frame.
+        /// </summary>
+        void Update()
+        {
+            if (PhotonNetwork.playerList.Length == 2)
             {
-                if (towardsPlayer2)
+                //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
+                if (PhotonNetwork.isMasterClient && movingtowards2 == false)
                 {
-                    float distcov = (Time.time - instantiatedplayers[0].GetComponent<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(player1position, player2position, distcov / Vector3.Distance(ball.transform.position, player2position));
+
+                    float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
+                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2").transform.position));
+
+                    if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
+                    {
+                        if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
+                        {
+                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text);
+                            score++;
+                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text = score.ToString();
+                        }
+
+                        movingtowards2 = true;
+
+                    }
+
                 }
                 else
                 {
-                    float distcov = (Time.time - instantiatedplayers[1].GetComponent<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(player2position, player1position, distcov / Vector3.Distance(ball.transform.position, player1position));
-                }
-
-                if(Vector3.Distance(ball.transform.position, player1position) < 0.2)
-                {
-                    if(instantiatedplayers[0].GetComponent<PaddleCollider>().swung == false)
+                    if (movingtowards2 == true)
                     {
-                        player2score++;
-                        instantiatedplayers[1].GetComponent<PaddleCollider>().GetComponentInChildren<Text>().text = player2score.ToString();
+                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
+                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1").transform.position));
+
+                        if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
+                        {
+                            if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
+                            {
+                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text);
+                                score++;
+                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text = score.ToString();
+                            }
+                            movingtowards2 = false;
+
+                        }
                     }
 
-                    if (instantiatedplayers[1].GetComponent<PaddleCollider>().swung == false)
-                    {
-                        player1score++;
-                        instantiatedplayers[0].GetComponent<PaddleCollider>().GetComponentInChildren<Text>().text = player1score.ToString();
-                    }
                 }
             }
+
+
 			// "back" button of phone equals "Escape". quit app if that's pressed
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
