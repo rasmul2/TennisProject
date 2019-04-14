@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 using UnityEngine;
 using UnityEngine.SceneManagement; 
@@ -31,20 +32,22 @@ namespace ExitGames.Demos.DemoAnimator
 
 		static public GameManager Instance;
 
-		[Tooltip("The prefab to use for representing the player")]
-		public GameObject playerPrefabLookingGlass;
-        public GameObject playerPrefabOculus;
+        [Tooltip("The prefab to use for representing the player")]
+        public GameObject playerPrefab;
 
         public bool isLookingGlass;
+
+        public GameObject ball;
 
 		#endregion
 
 		#region Private Variables
 
 		private GameObject instance;
-        public List<GameObject> instantiatedplayers;
-        public GameObject tennisLogic;
+        private GameObject instantiatedPlayer;
+        private Vector3 playerposition;
 
+        private bool movingtowards2;
 		#endregion
 
 		#region MonoBehaviour CallBacks
@@ -55,7 +58,6 @@ namespace ExitGames.Demos.DemoAnimator
 		void Start()
 		{
 			Instance = this;
-            instantiatedplayers = new List<GameObject>();
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
 			if (!PhotonNetwork.connected)
@@ -65,7 +67,7 @@ namespace ExitGames.Demos.DemoAnimator
 				return;
 			}
 
-			if (playerPrefabOculus == null || playerPrefabLookingGlass == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
+			if (playerPrefab == null) { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
 				
 				Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'",this);
 			} else {
@@ -75,15 +77,13 @@ namespace ExitGames.Demos.DemoAnimator
 				{
 					Debug.Log("We are Instantiating LocalPlayer from "+SceneManagerHelper.ActiveSceneName);
 
+                    int times = 1;
+                    if (isLookingGlass) { times = -1; };
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    if (isLookingGlass)
-                    {
-                       instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.Euler(new Vector3(0, 180, 0)), 0));
-                    }
-                    else
-                    {
-                        instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0));
-                    }
+                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f*times), Quaternion.identity, 0);
+                    playerposition = instantiatedPlayer.transform.position;
+                    
+  
 				}else{
 
 					Debug.Log("Ignoring scene load for "+ SceneManagerHelper.ActiveSceneName);
@@ -94,17 +94,58 @@ namespace ExitGames.Demos.DemoAnimator
 
 		}
 
-		/// <summary>
-		/// MonoBehaviour method called on GameObject by Unity on every frame.
-		/// </summary>
-		void Update()
-		{
-            //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
-            if(instantiatedplayers.Count == 2)
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity on every frame.
+        /// </summary>
+        void Update()
+        {
+            if (PhotonNetwork.playerList.Length == 2)
             {
-                tennisLogic.GetComponent<TennisLogic>().players = instantiatedplayers.ToArray();
-                tennisLogic.GetComponent<TennisLogic>().ReadyToStart();
+                //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
+                if (PhotonNetwork.isMasterClient && movingtowards2 == false)
+                {
+
+                    float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
+                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2 (Clone)").transform.position));
+
+                    if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
+                    {
+                        if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
+                        {
+                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
+                            score++;
+                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
+                        }
+
+                        movingtowards2 = true;
+
+                    }
+
+                }
+                else
+                {
+                    if (movingtowards2 == true)
+                    {
+                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
+                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1 (Clone)").transform.position));
+
+                        if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
+                        {
+                            if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
+                            {
+                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
+                                score++;
+                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
+                            }
+                            movingtowards2 = false;
+
+                        }
+                    }
+
+                }
             }
+
+
 			// "back" button of phone equals "Escape". quit app if that's pressed
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
@@ -183,7 +224,7 @@ namespace ExitGames.Demos.DemoAnimator
 
 			Debug.Log( "PhotonNetwork : Loading Level : " + PhotonNetwork.room.PlayerCount ); 
 
-			PhotonNetwork.LoadLevel("SampleScene");
+			//PhotonNetwork.LoadLevel("SampleScene");
 		}
 
 		#endregion
