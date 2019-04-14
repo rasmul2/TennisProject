@@ -78,7 +78,7 @@ namespace ExitGames.Demos.DemoAnimator
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
                     if (isLookingGlass)
                     {
-                       instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.identity, 0));
+                       instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.Euler(new Vector3(0, 180, 0)), 0));
                     }
                     else
                     {
@@ -100,7 +100,7 @@ namespace ExitGames.Demos.DemoAnimator
 		void Update()
 		{
             //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
-            if(instantiatedplayers.Count == 1)
+            if(instantiatedplayers.Count == 2)
             {
                 tennisLogic.GetComponent<TennisLogic>().players = instantiatedplayers.ToArray();
                 tennisLogic.GetComponent<TennisLogic>().ReadyToStart();
