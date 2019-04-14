@@ -16,6 +16,8 @@ public class TennisLogic : MonoBehaviour
     public GameObject gameManager;
     private Vector3 startPosition;
     private float startTime;
+    private float speed = 2F;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,7 +40,10 @@ public class TennisLogic : MonoBehaviour
 
     public void BeginMovingBall()
     {
-        ball.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        // compute refelection of normal vector
+        Vector3 normal = ball.transform.localPosition;
+        ball.GetComponent<Rigidbody>().AddForce(normal, ForceMode.Acceleration);
+
         isMoving = true;
         startPosition = ball.transform.position;
         startTime = Time.deltaTime;
@@ -81,7 +86,9 @@ public class TennisLogic : MonoBehaviour
             }
             else if (isMoving)
             {
-                float distCovered = (Time.time - startTime)*2;
+                // just hit the ball
+                float distCovered = (Time.time - startTime) * 2;
+
                 
 
                 if (side[0] == true)
