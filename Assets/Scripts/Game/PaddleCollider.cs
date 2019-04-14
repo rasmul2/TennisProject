@@ -61,6 +61,7 @@ public class PaddleCollider : MonoBehaviour
         {
             cooldown--;
         }
+
     }
 
 }
