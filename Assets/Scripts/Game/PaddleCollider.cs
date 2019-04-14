@@ -14,10 +14,12 @@ public class PaddleCollider : MonoBehaviour
     public GameObject text;
     public int score;
 
+    private float timeToDist = 5;
+    private Vector3 startPos;
     // Start is called before the first frame update
     void Start()
     {
-
+        startPos = gameObject.transform.position;
     }
 
     public void tryToSwing()
@@ -33,6 +35,17 @@ public class PaddleCollider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(timeToDist == 0)
+        {
+            Debug.Log("That arbitrary distance measure" + Vector3.Distance(startPos, gameObject.transform.position));
+            if(Vector3.Distance(startPos, gameObject.transform.position) > 0.5f)
+            {
+                tryToSwing();
+            }
+
+            timeToDist = 50;
+            startPos = gameObject.transform.position;
+        }
         if(swung == true)
         {
             swingTime--;
