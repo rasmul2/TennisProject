@@ -78,11 +78,17 @@ namespace ExitGames.Demos.DemoAnimator
 					Debug.Log("We are Instantiating LocalPlayer from "+SceneManagerHelper.ActiveSceneName);
 
                     int times = 1;
-                    if (isLookingGlass) { times = -1; };
+                    Quaternion rotation = Quaternion.identity;
+                    if (isLookingGlass) { times = -1; rotation = Quaternion.Euler(0, 180, 0); };
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f*times), Quaternion.identity, 0);
+                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f*times), rotation, 0);
                     playerposition = instantiatedPlayer.transform.position;
-                    
+
+                    if (PhotonNetwork.isMasterClient)
+                    {
+                        instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime = Time.time;
+                        instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung = true;
+                    }
   
 				}else{
 
@@ -100,13 +106,13 @@ namespace ExitGames.Demos.DemoAnimator
         void Update()
         {
             if (PhotonNetwork.playerList.Length == 2)
-            {
+            { 
                 //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
                 if (PhotonNetwork.isMasterClient && movingtowards2 == false)
                 {
 
                     float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2 (Clone)").transform.position));
+                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position));
 
                     if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                     {
@@ -126,8 +132,8 @@ namespace ExitGames.Demos.DemoAnimator
                 {
                     if (movingtowards2 == true)
                     {
-                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1 (Clone)").transform.position));
+                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
+                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position));
 
                         if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                         {
