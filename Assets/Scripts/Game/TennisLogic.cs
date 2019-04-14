@@ -18,6 +18,11 @@ public class TennisLogic : MonoBehaviour
     private float startTime;
     private float speed = 2F;
 
+    // variables for floating ball
+    private float forceFactor;
+    private float actionPoint;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +41,15 @@ public class TennisLogic : MonoBehaviour
         side[1] = true;
         ball.transform.position = players[0].transform.position + new Vector3(0, -3f, 3f);
 
+    }
+
+    /// <summary>
+    /// Serves the ball.
+    /// </summary>
+    /// <param name="playerPos">Player position.</param>
+    public void serveBall(int playerPos)
+    {
+        //BoxCollider courtboxCollixodl.GetComponent<BoxCollider>().bounds.max.x
     }
 
     public void BeginMovingBall()
@@ -57,7 +71,7 @@ public class TennisLogic : MonoBehaviour
     // Update is called once per frame 
     void Update()
     {
-        if(players[0] != null && players[1] != null) {
+        if (players[0] != null && players[1] != null) {
             //if ball is greater than the x or z max/ or ball is less than the x or z minus of the court then whoever's side it isn't gets the point
             if (ball.transform.position.x > court.GetComponent<BoxCollider>().bounds.max.x ||
                 ball.transform.position.z > court.GetComponent<BoxCollider>().bounds.max.z ||
@@ -80,7 +94,8 @@ public class TennisLogic : MonoBehaviour
                     side[0] = true;
                     side[1] = false;
 
-                    ball.transform.position = players[0].transform.position + new Vector3(0, -3f, 3f);
+                    //ball.transform.position = players[0].transform.position + new Vector3(0, -3f, 3f);
+                    BeginMovingBall();
                     freezeBall();
                 }
             }
