@@ -5,6 +5,7 @@ using UnityEngine;
 public class BallServe : MonoBehaviour
 {
 
+    public GameObject ball;
     public Transform creation;
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,10 @@ public class BallServe : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            Instantiate(creation, transform.position + transform.forward * 5, transform.rotation);
+            transform.position = Camera.main.transform.position + new Vector3(0, 3, 5);
+            
+//            Instantiate(creation, transform.position + transform.forward * 5, transform.rotation);
+            //Instantiate(ball, transform.position + transform.forward * 5, transform.rotation);
         }
 
     }
