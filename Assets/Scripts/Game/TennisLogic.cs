@@ -7,7 +7,7 @@ public class TennisLogic : MonoBehaviour
     public GameObject[] players;
     public GameObject court;
 
-    public int[] score;
+    public Score score;
 
     private bool[] side;
     public GameObject ball;
@@ -19,7 +19,7 @@ public class TennisLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        score = new int[2] { 0, 0 };
+        score = new Score();
         
         players = new GameObject[2];
 
@@ -61,7 +61,7 @@ public class TennisLogic : MonoBehaviour
             {
                 if (side[0] == true)
                 {
-                    score[0]++;
+                    score.increment_player_score(players[0].name);
                     side[0] = false;
                     side[1] = true;
 
@@ -71,7 +71,7 @@ public class TennisLogic : MonoBehaviour
                 }
                 else
                 {
-                    score[1]++;
+                    score.increment_player_score(players[1].name);
                     side[0] = false;
                     side[1] = true;
 
