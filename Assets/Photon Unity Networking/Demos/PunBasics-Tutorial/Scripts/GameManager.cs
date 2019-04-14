@@ -77,8 +77,10 @@ namespace ExitGames.Demos.DemoAnimator
 				{
 					Debug.Log("We are Instantiating LocalPlayer from "+SceneManagerHelper.ActiveSceneName);
 
+                    int times = 1;
+                    if (isLookingGlass) { times = -1; };
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0);
+                    instantiatedPlayer = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -25f*times), Quaternion.identity, 0);
                     playerposition = instantiatedPlayer.transform.position;
                     
   
@@ -104,15 +106,15 @@ namespace ExitGames.Demos.DemoAnimator
                 {
 
                     float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2").transform.position));
+                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position));
 
                     if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                     {
                         if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                         {
-                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text);
+                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
                             score++;
-                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text = score.ToString();
+                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
                         }
 
                         movingtowards2 = true;
@@ -125,15 +127,15 @@ namespace ExitGames.Demos.DemoAnimator
                     if (movingtowards2 == true)
                     {
                         float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1").transform.position));
+                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position));
 
                         if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                         {
                             if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                             {
-                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text);
+                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
                                 score++;
-                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInChildren<Text>().text = score.ToString();
+                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
                             }
                             movingtowards2 = false;
 
@@ -222,7 +224,7 @@ namespace ExitGames.Demos.DemoAnimator
 
 			Debug.Log( "PhotonNetwork : Loading Level : " + PhotonNetwork.room.PlayerCount ); 
 
-			PhotonNetwork.LoadLevel("SampleScene");
+			//PhotonNetwork.LoadLevel("SampleScene");
 		}
 
 		#endregion
