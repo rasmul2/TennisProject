@@ -5,6 +5,7 @@ using UnityEngine;
 public class BallLogic : MonoBehaviour
 {
     private bool movingtowards2 = true;
+    int index = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,15 +15,21 @@ public class BallLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(index == 1000) {
+            index = 0;
+            gameObject.transform.position = new Vector3(0, 0.5f, -25f);
+        }
+        index++;
         if(GameObject.Find("Player1(Clone)") != null && GameObject.Find("Player2(Clone)") != null)
         {
-
+            gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, new Vector3(0, 0.5f, 25f), Time.deltaTime);
             //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
+            /*
             if (movingtowards2 == false)
             {
 
-                float distcov = (Time.time - GameObject.Find("Player1(Clone)").GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
-                gameObject.transform.position = Vector3.Lerp(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position, distcov/Vector3.Distance(gameObject.transform.position, GameObject.Find("Player2(Clone)").transform.position));
+                float distcov = (Time.time - 10) * 0.5f;
+                gameObject.transform.position = Vector3.Lerp(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position, 1- Vector3.Distance(gameObject.transform.position, GameObject.Find("Player2(Clone)").transform.position) / Vector3.Distance(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position));
 
                 if (Vector3.Distance(gameObject.transform.position, GameObject.Find("Player2(Clone)").transform.position) < 1)
                 {
@@ -42,8 +49,8 @@ public class BallLogic : MonoBehaviour
             {
                 if (movingtowards2 == true)
                 {
-                    float distcov = (Time.time - GameObject.Find("Player2(Clone)").GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
-                    gameObject.transform.position = Vector3.Lerp(GameObject.Find("Player2(Clone)").transform.position, GameObject.Find("Player1(Clone)").transform.position, distcov/ Vector3.Distance(gameObject.transform.position, GameObject.Find("Player1(Clone)").transform.position) );
+                    float distcov = (Time.time - 10) * 0.5f;
+                    gameObject.transform.position = Vector3.Lerp(GameObject.Find("Player2(Clone)").transform.position, GameObject.Find("Player1(Clone)").transform.position, 1 - Vector3.Distance(gameObject.transform.position, GameObject.Find("Player1(Clone)").transform.position) / Vector3.Distance(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position));
 
                     if (Vector3.Distance(gameObject.transform.position, GameObject.Find("Player1(Clone)").transform.position) < 1)
                     {
@@ -61,6 +68,7 @@ public class BallLogic : MonoBehaviour
                 }
 
             }
+            */
         }
 
     }
