@@ -61,7 +61,7 @@ public class TennisLogic : MonoBehaviour
             {
                 if (side[0] == true)
                 {
-                    score[0]++;
+                    score[1]++;
                     side[0] = false;
                     side[1] = true;
 
@@ -71,9 +71,9 @@ public class TennisLogic : MonoBehaviour
                 }
                 else
                 {
-                    score[1]++;
-                    side[0] = false;
-                    side[1] = true;
+                    score[0]++;
+                    side[0] = true;
+                    side[1] = false;
 
                     ball.transform.position = players[0].transform.position + new Vector3(0, -3f, 3f);
                     freezeBall();
