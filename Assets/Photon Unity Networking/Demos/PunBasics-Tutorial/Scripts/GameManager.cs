@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement; 
@@ -41,6 +42,8 @@ namespace ExitGames.Demos.DemoAnimator
 		#region Private Variables
 
 		private GameObject instance;
+        public List<GameObject> instantiatedplayers;
+        public GameObject tennisLogic;
 
 		#endregion
 
@@ -52,6 +55,7 @@ namespace ExitGames.Demos.DemoAnimator
 		void Start()
 		{
 			Instance = this;
+            instantiatedplayers = new List<GameObject>();
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
 			if (!PhotonNetwork.connected)
@@ -74,11 +78,11 @@ namespace ExitGames.Demos.DemoAnimator
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
                     if (isLookingGlass)
                     {
-                        PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.identity, 0);
+                       instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.identity, 0));
                     }
                     else
                     {
-                        PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0);
+                        instantiatedplayers.Add(PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0));
                     }
 				}else{
 
@@ -95,6 +99,10 @@ namespace ExitGames.Demos.DemoAnimator
 		/// </summary>
 		void Update()
 		{
+            if(instantiatedplayers.Count == 1)
+            {
+                tennisLogic.GetComponent<TennisLogic>().players = instantiatedplayers.ToArray();
+            }
 			// "back" button of phone equals "Escape". quit app if that's pressed
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
