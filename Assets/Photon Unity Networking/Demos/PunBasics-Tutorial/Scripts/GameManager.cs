@@ -47,7 +47,7 @@ namespace ExitGames.Demos.DemoAnimator
         private GameObject instantiatedPlayer;
         private Vector3 playerposition;
 
-        private bool movingtowards2;
+        private bool movingtowards2 = true;
 		#endregion
 
 		#region MonoBehaviour CallBacks
@@ -118,9 +118,9 @@ namespace ExitGames.Demos.DemoAnimator
                     {
                         if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                         {
-                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
+                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text);
                             score++;
-                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
+                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text = score.ToString();
                         }
 
                         movingtowards2 = true;
@@ -132,18 +132,20 @@ namespace ExitGames.Demos.DemoAnimator
                 {
                     if (movingtowards2 == true)
                     {
-                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
+                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5f;
                         ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position));
 
-                        if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
+                        if (Vector3.Distance(ball.transform.position, playerposition) < 0.2f)
                         {
                             if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                             {
-                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text);
+                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text);
                                 score++;
-                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<Text>().text = score.ToString();
+                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text = score.ToString();
+                                
                             }
                             movingtowards2 = false;
+                            Debug.Log("Should move the other direction");
 
                         }
                     }
