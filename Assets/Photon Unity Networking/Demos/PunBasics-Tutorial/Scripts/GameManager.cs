@@ -86,15 +86,17 @@ namespace ExitGames.Demos.DemoAnimator
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
                     if (isLookingGlass)
                     {
-                       instantiatedplayers[1] = PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, 0f, 25f), Quaternion.Euler(new Vector3(0, 180, 0)), 0);
+                       instantiatedplayers[1] = PhotonNetwork.Instantiate(this.playerPrefabLookingGlass.name, new Vector3(0f, -7, 25f), Quaternion.Euler(new Vector3(0, 180, 0)), 0);
                         player1position = instantiatedplayers[1].transform.position;
-                        instantiatedplayers[0].GetComponent<PaddleCollider>().swung = true;
-                        instantiatedplayers[0].GetComponent<PaddleCollider>().swingTime = Time.time;
+                        instantiatedplayers[1].GetComponent<PaddleCollider>().swung = true;
+                        instantiatedplayers[1].GetComponent<PaddleCollider>().swingTime = Time.time;
+                        PlayerManager.LocalPlayerInstance = instantiatedplayers[1];
                     }
                     else
                     {
                         instantiatedplayers[0] = (PhotonNetwork.Instantiate(this.playerPrefabOculus.name, new Vector3(0f, 0f, -25f), Quaternion.identity, 0));
                         player2position = instantiatedplayers[0].transform.position;
+                        PlayerManager.LocalPlayerInstance = instantiatedplayers[0];
                     }
 				}else{
 
