@@ -4,35 +4,63 @@ using UnityEngine;
 
 public class PaddleCollider : MonoBehaviour
 {
-    public GameObject ball;
-    public GameObject tennisLogic;
+
+    public bool swung = false;
+    public float cooldown = 50;
+    public float swingTime = 10;
+
+    public float swungtime = 0;
+
+    public GameObject text;
+    public int score;
+
+    private float timeToDist = 5;
+    private Vector3 startPos;
     // Start is called before the first frame update
     void Start()
     {
-        ball = GameObject.FindGameObjectsWithTag("ball")[0];
-        tennisLogic = GameObject.FindGameObjectsWithTag("Tennis Logic")[0];
+        startPos = gameObject.transform.position;
+    }
+
+    public void tryToSwing()
+    {
+        if(cooldown == 0)
+        {
+            swung = true;
+            cooldown = 50;
+            swungtime = Time.time;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Something collided with me");
-        if(collision.collider.name == ball.GetComponent<Collider>().name)
+        if(timeToDist == 0)
         {
-            Debug.Log(collision.collider.name);
-            if (!tennisLogic.GetComponent<TennisLogic>().isMoving)
+            Debug.Log("That arbitrary distance measure" + Vector3.Distance(startPos, gameObject.transform.position));
+            if(Vector3.Distance(startPos, gameObject.transform.position) > 0.5f)
             {
-                tennisLogic.GetComponent<TennisLogic>().BeginMovingBall();
-                
-
+                tryToSwing();
             }
-            Vector3 tempVect = new Vector3(collision.rigidbody.velocity.x * -1, collision.rigidbody.velocity.y * -1, collision.rigidbody.velocity.z*-1);
-            ball.GetComponent<Rigidbody>().AddForce(tempVect*500, ForceMode.VelocityChange);
+
+            timeToDist = 50;
+            startPos = gameObject.transform.position;
+        }
+        if(swung == true)
+        {
+            swingTime--;
+        }
+
+        if(swingTime == 0)
+        {
+            swung = false;
+            swingTime = 10;
+        }
+
+        if(cooldown > 0)
+        {
+            cooldown--;
         }
     }
+
 }

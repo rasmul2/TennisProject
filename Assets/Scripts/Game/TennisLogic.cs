@@ -49,10 +49,10 @@ public class TennisLogic : MonoBehaviour
         isMoving = false;
     }
 
-    // Update is called once per frame
+    // Update is called once per frame 
     void Update()
     {
-        if(players[0] != null) {
+        if(players[0] != null && players[1] != null) {
             //if ball is greater than the x or z max/ or ball is less than the x or z minus of the court then whoever's side it isn't gets the point
             if (ball.transform.position.x > court.GetComponent<BoxCollider>().bounds.max.x ||
                 ball.transform.position.z > court.GetComponent<BoxCollider>().bounds.max.z ||
@@ -61,7 +61,7 @@ public class TennisLogic : MonoBehaviour
             {
                 if (side[0] == true)
                 {
-                    score[0]++;
+                    score[1]++;
                     side[0] = false;
                     side[1] = true;
 
@@ -71,9 +71,9 @@ public class TennisLogic : MonoBehaviour
                 }
                 else
                 {
-                    score[1]++;
-                    side[0] = false;
-                    side[1] = true;
+                    score[0]++;
+                    side[0] = true;
+                    side[1] = false;
 
                     ball.transform.position = players[0].transform.position + new Vector3(0, -3f, 3f);
                     freezeBall();
