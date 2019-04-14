@@ -47,7 +47,7 @@ namespace ExitGames.Demos.DemoAnimator
         private GameObject instantiatedPlayer;
         private Vector3 playerposition;
 
-        private bool movingtowards2 = true;
+        public bool movingtowards2 = true;
 		#endregion
 
 		#region MonoBehaviour CallBacks
@@ -89,8 +89,22 @@ namespace ExitGames.Demos.DemoAnimator
                         instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime = Time.time;
                         instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung = true;
                     }
-  
-				}else{
+
+                    if (PhotonNetwork.playerList.Length == 1)
+                    {
+                        if (GameObject.Find("Player1(Clone)") != null)
+                        {
+                            GameObject.Find("Player2(Clone)").GetComponent<GameManager>().movingtowards2 = GameObject.Find("Player1(Clone)").GetComponent<GameManager>().movingtowards2;
+                        }
+                        else
+                        {
+                            GameObject.Find("Player1(Clone)").GetComponent<GameManager>().movingtowards2 = GameObject.Find("Player2(Clone)").GetComponent<GameManager>().movingtowards2;
+                        }
+                    }
+
+
+                }
+                else{
 
 					Debug.Log("Ignoring scene load for "+ SceneManagerHelper.ActiveSceneName);
 				}
@@ -105,16 +119,17 @@ namespace ExitGames.Demos.DemoAnimator
         /// </summary>
         void Update()
         {
+            
             if (PhotonNetwork.playerList.Length == 2)
             { 
                 //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
                 if (movingtowards2 == false)
                 {
 
-                    float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position));
+                    float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
+                    ball.transform.position = Vector3.Lerp(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position, Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position/ distcov));
 
-                    if (Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position) < 1)
+                    if (Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position) < 1)
                     {
                         if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                         {
@@ -132,10 +147,10 @@ namespace ExitGames.Demos.DemoAnimator
                 {
                     if (movingtowards2 == true)
                     {
-                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5f;
-                        ball.transform.position = Vector3.Lerp(GameObject.Find("Player2(Clone)").transform.position, GameObject.Find("Player1(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position));
+                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
+                        ball.transform.position = Vector3.Lerp(GameObject.Find("Player2(Clone)").transform.position, GameObject.Find("Player1(Clone)").transform.position, Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position/ distcov));
 
-                        if (Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position) < 1)
+                        if (Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position) < 1)
                         {
                             if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
                             {
