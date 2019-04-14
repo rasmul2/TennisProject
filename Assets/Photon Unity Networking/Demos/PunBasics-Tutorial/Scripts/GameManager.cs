@@ -106,7 +106,7 @@ namespace ExitGames.Demos.DemoAnimator
                 {
 
                     float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position));
+                    ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player2 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player2 (Clone)").transform.position));
 
                     if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                     {
@@ -127,7 +127,7 @@ namespace ExitGames.Demos.DemoAnimator
                     if (movingtowards2 == true)
                     {
                         float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 5;
-                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1(Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position));
+                        ball.transform.position = Vector3.Lerp(playerposition, GameObject.Find("Player1 (Clone)").transform.position, distcov / Vector3.Distance(ball.transform.position, GameObject.Find("Player1 (Clone)").transform.position));
 
                         if (Vector3.Distance(ball.transform.position, playerposition) < 0.2)
                         {
