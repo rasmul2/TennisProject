@@ -21,13 +21,18 @@ public class PaddleCollider : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Something collided with me");
         if(collision.collider.name == ball.GetComponent<Collider>().name)
         {
+            Debug.Log(collision.collider.name);
             if (!tennisLogic.GetComponent<TennisLogic>().isMoving)
             {
                 tennisLogic.GetComponent<TennisLogic>().BeginMovingBall();
+                
 
             }
+            Vector3 tempVect = new Vector3(collision.rigidbody.velocity.x * -1, collision.rigidbody.velocity.y * -1, collision.rigidbody.velocity.z*-1);
+            ball.GetComponent<Rigidbody>().AddForce(tempVect*500, ForceMode.VelocityChange);
         }
     }
 }

@@ -99,9 +99,11 @@ namespace ExitGames.Demos.DemoAnimator
 		/// </summary>
 		void Update()
 		{
+            //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
             if(instantiatedplayers.Count == 1)
             {
                 tennisLogic.GetComponent<TennisLogic>().players = instantiatedplayers.ToArray();
+                tennisLogic.GetComponent<TennisLogic>().ReadyToStart();
             }
 			// "back" button of phone equals "Escape". quit app if that's pressed
 			if (Input.GetKeyDown(KeyCode.Escape))
