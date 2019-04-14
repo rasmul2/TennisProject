@@ -119,62 +119,16 @@ namespace ExitGames.Demos.DemoAnimator
         /// </summary>
         void Update()
         {
-            
-            if (PhotonNetwork.playerList.Length == 2)
-            { 
-                //Debug.Log("Instantiated player count" + instantiatedplayers.Count);
-                if (movingtowards2 == false)
-                {
 
-                    float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
-                    ball.transform.position = Vector3.Lerp(GameObject.Find("Player1(Clone)").transform.position, GameObject.Find("Player2(Clone)").transform.position, Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position/ distcov));
 
-                    if (Vector3.Distance(ball.transform.position, GameObject.Find("Player2(Clone)").transform.position) < 1)
-                    {
-                        if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
-                        {
-                            int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text);
-                            score++;
-                            instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text = score.ToString();
-                        }
 
-                        movingtowards2 = true;
-
-                    }
-
-                }
-                else
-                {
-                    if (movingtowards2 == true)
-                    {
-                        float distcov = (Time.time - instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swingTime) * 0.5f;
-                        ball.transform.position = Vector3.Lerp(GameObject.Find("Player2(Clone)").transform.position, GameObject.Find("Player1(Clone)").transform.position, Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position/ distcov));
-
-                        if (Vector3.Distance(ball.transform.position, GameObject.Find("Player1(Clone)").transform.position) < 1)
-                        {
-                            if (instantiatedPlayer.GetComponentInChildren<PaddleCollider>().swung == false)
-                            {
-                                int score = int.Parse(instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text);
-                                score++;
-                                instantiatedPlayer.GetComponentInChildren<PaddleCollider>().GetComponentInParent<TextMesh>().text = score.ToString();
-                                
-                            }
-                            movingtowards2 = false;
-                            Debug.Log("Should move the other direction");
-
-                        }
-                    }
-
-                }
+            // "back" button of phone equals "Escape". quit app if that's pressed
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                QuitApplication();
             }
-
-
-			// "back" button of phone equals "Escape". quit app if that's pressed
-			if (Input.GetKeyDown(KeyCode.Escape))
-			{
-				QuitApplication();
-			}
-		}
+        }
+	
 
 		#endregion
 
